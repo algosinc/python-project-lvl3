@@ -1,12 +1,13 @@
 import argparse
-import logging
-from loader.constants import DEFAULT_DIR
+from page_loader.scripts.config.definitions import DEFAULT_DIR, DEFAULT_LOG_LEVEL
+from page_loader.loader import download
 
 
 def main():
-    download_dir, url, logger_level = cli()
+    url, download_dir, logger_level = cli()
     # ADD setup logging level
-    pass
+    saved_page = download(url, download_dir)
+    print(saved_page)
 
 
 def cli():
