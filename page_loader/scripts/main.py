@@ -1,5 +1,5 @@
 import argparse
-from page_loader.scripts.config.definitions import DEFAULT_DIR, DEFAULT_LOG_LEVEL
+from page_loader.scripts.definitions import DEFAULT_DIR, DEFAULT_LOG_LEVEL
 from page_loader.loader import download
 
 
