@@ -30,4 +30,6 @@ $RECYCLE.BIN/
 #hexlet
 .venv/*
 dist/*
-tmp/
+page_loader/dev/tmp/
+page_loader/tmp/
+page_loader/dev/

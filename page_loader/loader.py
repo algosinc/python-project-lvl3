@@ -1,73 +1,80 @@
 import os
-import re
-from urllib.parse import urlparse
-from page_loader.scripts.config.definitions import ROOT_DIR, DEFAULT_DIR
-
 import requests
 
-"""
-Реализуйте утилиту командной строки page-page_loader, которая, скачивает страницу из сети и кладет в указанную существующую 
-директорию (по умолчанию в директорию запуска программы). Программа должна выводить на экран полный путь к загруженному файлу.
-
-На данном этапе не производятся манипуляции с содержимым, только сохранение.
-
-# по умолчанию output это os.getcwd()
-$ page-page_loader --output /var/tmp https://ru.hexlet.io/courses
-/var/tmp/ru-hexlet-io-courses.html  # путь к загруженному файлу
-
-from page_loader import download
-
-file_path = download('https://ru.hexlet.io/courses', '/var/tmp')
-print(file_path)  # => '/var/tmp/ru-hexlet-io-courses.html'
-То есть ваша библиотека должна предоставлять модуль page_loader с функцией download(), вызов которой скачивает страницу 
-из сети в указанную существующую директорию и возвращает полный путь к загруженному файлу, включая имя самого файла.
-
-Имя файла должно формироваться следующим образом:
-
-Берется адрес страницы без схемы
-Все символы, кроме букв и цифр, заменяются на дефис -.
-В конце ставится .html.
-Пример:
-
-https://ru.hexlet.io/courses
-ru-hexlet-io-courses.html
-"""
+from page_loader.namer import get_filename
+#from page_loader.parser import get_resources_links
+from page_loader.scripts.definitions import ROOT_DIR, DEFAULT_DIR
 
 
-def download(url, download_dir=DEFAULT_DIR):
-#    filename = os.path.basename(urlparse(url).path)
+'''
+Задачи
+Добавьте в тесты проверку скачивания изображений и изменения HTML.
+Измените HTML так, чтобы все ссылки указывали на скачанные файлы.
+Добавьте в ридми аскинему с примером работы пакета.
+Подсказки
+Beautiful Soup может ломать отступы и кодировку после изменения HTML-файла, учитывайте это в фикстурах.
+При изменении HTML с помощью Beautiful Soup используйте значение по умолчанию форматера prettify().
+Для парсинга html используйте html.parser.
+'''
 
-    path = os.path.join(ROOT_DIR, download_dir, get_filename(url))
-    local_path = os.path.join(download_dir, get_filename(url))
-    r = requests.get(url)
-    os.makedirs(os.path.dirname(local_path), exist_ok=True)
-    with open(local_path, 'w', encoding='utf-8') as f:
+
+def download(url: str, download_dir=DEFAULT_DIR) -> str:
+    """
+    Main download function:
+        - download and save page in html format
+        - parse it for resources
+        - save resources to sub folder
+
+    :param url: url for downloading
+    :param download_dir: folder name to save
+    :return: local path to saved html file for CLI output
+    """
+
+    file_path = os.path.join(ROOT_DIR, download_dir, get_filename(url))     # generate absolute path for saving file
+    r = requests.get(url)                                                   # download file
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)                  # make dir, existed dirs allowed
+    with open(file_path, 'w', encoding='utf-8') as f:                       # save file
         f.write(r.text)
-    return local_path
+    download_resources(file_path, url)
+    return os.path.join(download_dir, get_filename(url))         # generate and return relative file path for CLI output
 
 
-def get_filename(url, ext='.html'):
-    u = urlparse(url)
-    parsed_url = u.hostname + u.path
-    url_head, url_tail = os.path.splitext(parsed_url)
-
-    if url_tail == ext:
-        return f'{filename_convert(url_head)}{ext}'
-
-    return f'{filename_convert(parsed_url)}{ext}'
+# def download_html()
 
 
-def filename_convert(filename):
-    return re.sub(f'\W', '-', filename)
+def download_resources(path: str, url: str) -> None:
+    """ Download local resources.
+    :param path: path to html file
+    :param url: url of the web page
+    """
+    for file_url, file_path in get_resources_links(path, url):
+        response = requests.get(file_url, stream=True)              # download file
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)      # make dir, existed dirs allowed
+        with open(file_path, 'wb') as f:                            # save file with chunk iteration
+            for chunk in response.iter_content(chunk_size=None):
+                f.write(chunk)
 
 
-def main():
-    print(get_filename('https://www.geeksforgeeks.org/python-os-path-join-method'))
-    print(get_filename('https://www.geeksforgeeks.org/python-os-path-join-method/blabka.html'))
-    print(download('https://www.nepremicnine.net/novogradnje.html'))
 
-if __name__ == '__main__':
-    main()
+
+def make_dir_for_resources(filename):
+    """
+    Make a dir like filename_files
+    """
+    pass
+
+
+
+def is_unic_name(filename, path):
+    """
+    check is file has unique filename in resources folder
+    if not - generate new and unique
+    :param filename:
+    :param path: path to resource folder
+    :return: unique filename
+    """
+
+
 
 
 
