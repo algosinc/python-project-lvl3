@@ -8,7 +8,7 @@ ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), ''))
 
 # CLI config
 DEFAULT_DIR = 'tmp'
-DEFAULT_LOG_LEVEL = 'min_log'
+DEFAULT_LOG_LEVEL = 'warning'
 
 # allowed tags for downloading resources
 ALLOWED_TAGS = ['img', 'script', 'link']
