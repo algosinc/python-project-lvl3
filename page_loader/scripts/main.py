@@ -1,17 +1,20 @@
 import sys
 import argparse
 import logging
-from page_loader import logging_config
+from logging.config import dictConfig
+from page_loader.logging_config import LOGGING_LEVELS, logger_setup
 from page_loader.scripts.definitions import DEFAULT_DIR, DEFAULT_LOG_LEVEL
 from page_loader.loader import download, ExpectedError
 
 SUCCESS_MESSAGE = "Page was successfully downloaded into '{0}'"
-logger = logging.getLogger(__name__)
 
 
 def main() -> None:
     """ Main function """
-    url, download_dir, logger_level = cli()  # get args from CLI
+    url, download_dir, logger_level = cli()     # get args from CLI
+    logging.config.dictConfig(logger_setup(logger_level))
+    logger = logging.getLogger(__name__)
+
     try:
         saved_page = download(url, download_dir)
     except ExpectedError as err:
@@ -42,7 +45,7 @@ def cli() -> (str, str, str):
                         '--log-level',
                         type=str,
                         default=DEFAULT_LOG_LEVEL,
-                        choices=logging_config.LOGGING_CONFIG.keys(),
+                        choices=LOGGING_LEVELS.keys(),
                         help='sets log level (default: {0})'.format(DEFAULT_LOG_LEVEL)
                         )
 
@@ -52,3 +55,4 @@ def cli() -> (str, str, str):
 
 if __name__ == '__main__':
     main()
+

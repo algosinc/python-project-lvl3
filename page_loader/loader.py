@@ -39,6 +39,7 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
 
     try:
         os.makedirs(os.path.dirname(page_path), exist_ok=True)      # make dir, existed dirs allowed
+        logger.debug(f'Created dir {os.path.dirname(page_path)}')
     except FileNotFoundError:
         raise ExpectedError(
             f'Make sure that you have chosen the correct directory for saving files. {page_path}')
@@ -52,6 +53,7 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
     download_path = download_html(url, page_path)
     # download_resources(page_path, url)
     # os.path.join(download_dir, get_filename(url))         # generate and return relative file path for CLI output
+
     return download_path
 
 
