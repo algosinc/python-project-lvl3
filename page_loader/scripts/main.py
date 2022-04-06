@@ -3,7 +3,7 @@ import argparse
 import logging
 from logging.config import dictConfig
 from page_loader.logging_config import LOGGING_LEVELS, logger_setup
-from page_loader.scripts.definitions import DEFAULT_DIR, DEFAULT_LOG_LEVEL
+from page_loader.scripts.definitions import DEFAULT_DIR
 from page_loader.loader import download, ExpectedError
 
 SUCCESS_MESSAGE = "Page was successfully downloaded into '{0}'"
@@ -17,8 +17,8 @@ def main() -> None:
 
     try:
         saved_page = download(url, download_dir)
-    except ExpectedError as err:
-        logger.error(err)
+    except ExpectedError:
+        logging.exception("Web page download failed")
         sys.exit(1)
     print(SUCCESS_MESSAGE.format(saved_page))
     sys.exit(0)
@@ -44,9 +44,9 @@ def cli() -> (str, str, str):
                         '-l',
                         '--log-level',
                         type=str,
-                        default=DEFAULT_LOG_LEVEL,
+                        default='warning',
                         choices=LOGGING_LEVELS.keys(),
-                        help='sets log level (default: {0})'.format(DEFAULT_LOG_LEVEL)
+                        help='sets log level (default: warning)'
                         )
 
     args = parser.parse_args()
