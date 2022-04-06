@@ -27,7 +27,6 @@ $RECYCLE.BIN/
 # Folders
 .idea/*
 env/*
-env/
 
 #hexlet
 .venv/*
@@ -35,4 +34,3 @@ dist/*
 page_loader/dev/tmp/
 page_loader/tmp/
 page_loader/dev/
-/env/
