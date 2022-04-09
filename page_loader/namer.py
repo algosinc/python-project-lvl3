@@ -4,7 +4,7 @@ import os
 from urllib.parse import urlparse
 
 
-def get_filename(url, ext='.html'):
+def get_page_filename(url, ext='.html'):
 
     '''
     TODO: ограничить максимальную длину имени
