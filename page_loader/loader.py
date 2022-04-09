@@ -4,8 +4,8 @@ import logging
 
 from colorama import Fore
 from progress.spinner import Spinner
-from page_loader.namer import get_filename
-from page_loader.parser import get_resources_links
+from page_loader.namer import get_page_filename
+from page_loader.parser import get_resources_links, get_filename
 from page_loader.scripts.definitions import ROOT_DIR, DEFAULT_DIR
 
 
@@ -22,6 +22,7 @@ Beautiful Soup может ломать отступы и кодировку по
 
 logger = logging.getLogger(__name__)
 
+
 class ExpectedError(Exception):
     """Class for errors expected during excecution of programm."""
     pass
@@ -36,7 +37,7 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
     :raises ExpectedError: permission denied or incorrect path
     """
 
-    page_path = os.path.join(ROOT_DIR, download_dir, get_filename(url))     # generate absolute path for saving file
+    page_path = os.path.join(ROOT_DIR, download_dir, get_page_filename(url))     # generate absolute path for saving file
     logger.debug(f'Generated path for saving file: {page_path}')
 
     try:
@@ -51,7 +52,10 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
         logger.exception(f'Permission denied for {page_path}')
         raise
 
+    logger.debug(f'Download resources from page: {url}')
     download_resources(download_path, url)
+
+    logger.debug(f'download() return path of saved url: {download_path}')
     return download_path
 
 
@@ -71,8 +75,19 @@ def download_html(url: str, page_path: str) -> str:
         logger.exception("Network error happened.")
         raise
 
+    # save page for modification
     with open(page_path, 'w', encoding='utf-8') as f:
         f.write(response.text)
+        logger.debug(f'Saved page for modification: {page_path}')
+
+    # save original page
+    name, ext = os.path.splitext(page_path)
+    original_page_path = os.path.join(os.path.dirname(page_path), f'{name}_original{ext}')
+    with open(original_page_path, 'w', encoding='utf-8') as f2:
+        f2.write(response.text)
+        logger.debug(f'Saved original page: {original_page_path}')
+
+    logger.debug(f'Return: {page_path}')
     return page_path
 
 
@@ -81,36 +96,14 @@ def download_resources(path: str, url: str) -> None:
     :param path: path to html file
     :param url: url of the web page
     """
+    logger.debug(f'Download resources from page: {path} / {url}')
     for file_url, page_path in get_resources_links(path, url):
-        response = requests.get(file_url, stream=True)              # download file
+        response = requests.get(file_url, stream=True)
+        logger.debug(f'download resource {file_url}, response status code: {response.status_code}')
+        # download file
         os.makedirs(os.path.dirname(page_path), exist_ok=True)      # make dir, existed dirs allowed
         with open(page_path, 'wb') as f:                            # save file with chunk iteration
             for chunk in response.iter_content(chunk_size=None):
                 f.write(chunk)
-
-
-
-
-def make_dir_for_resources(filename):
-    """
-    Make a dir like filename_files
-    """
-    pass
-
-
-
-def is_unic_name(filename, path):
-    """
-    check is file has unique filename in resources folder
-    if not - generate new and unique
-    :param filename:
-    :param path: path to resource folder
-    :return: unique filename
-    """
-
-
-
-
-
-
+            logger.debug(f'File saved to {page_path}')
 
