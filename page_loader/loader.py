@@ -1,3 +1,4 @@
+"""Module for downloading the page and resources."""
 import logging
 import os
 
@@ -6,16 +7,22 @@ from colorama import Fore
 from progress.spinner import Spinner
 
 from page_loader.namer import get_page_filename
-from page_loader.parser import get_filename, get_resources_links
+from page_loader.parser import get_resources_links
 from page_loader.scripts.definitions import DEFAULT_DIR, ROOT_DIR
 
 logger = logging.getLogger(__name__)
 
 
 class ExpectedError(Exception):
-    """Class for errors expected during excecution of programm."""
+    """Class for errors expected during execution of program."""
 
     pass    # noqa
+
+
+class DownloadSpinner(Spinner):
+    """Custom spinner to show progress of local downloads."""
+
+    phases = [Fore.GREEN + '✓ Downloaded: ' + Fore.RESET]
 
 
 def download(url: str, download_dir=DEFAULT_DIR) -> str:
@@ -23,8 +30,10 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
 
     :param url: url for downloading
     :param download_dir: folder for saving downloaded files
-    :return local path to saved html file for CLI output
-    :raises ExpectedError: permission denied or incorrect path
+    :raises OSError: incorrect path
+    :raises PermissionError: permission denied
+
+    :return: local path to saved html file for CLI output
     """
     # generate absolute path for saving file
     page_path = os.path.join(ROOT_DIR, download_dir, get_page_filename(url))
@@ -32,7 +41,7 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
 
     try:
         os.makedirs(os.path.dirname(page_path), exist_ok=True)      # make dir, existed dirs allowed
-    except (OSError, FileNotFoundError):
+    except OSError:
         logger.exception('FS error happened.')
         raise
 
@@ -50,13 +59,14 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
 
 
 def download_html(url: str, page_path: str) -> str:
-    """Download html file and save it to the specified directory.
+    """Download html file and save it to the specified directory. # noqa DAR003
 
     :param url: url of the web page
     :param page_path: folder for saving downloaded files
-    :return local path to saved html file for CLI output
-    :raises RequestException: request error
+    :raise RequestException: request error
+    :return: local path to saved html file for CLI output
     """
+
     try:
         response = requests.get(url)
         logger.debug(f'Response status code: {response.status_code}')
@@ -68,6 +78,7 @@ def download_html(url: str, page_path: str) -> str:
     # save page for modification
     with open(page_path, 'w', encoding='utf-8') as f:
         f.write(response.text)
+        print(f'⇓ Downloading page: {url}')  # noqa DAR003
         logger.debug(f'Saved page for modification: {page_path}')
 
     # save original page
@@ -82,11 +93,14 @@ def download_html(url: str, page_path: str) -> str:
 
 
 def download_resources(path: str, url: str) -> None:
-    """ Download local resources.
+    """Download local resources.
+
     :param path: path to html file
     :param url: url of the web page
     """
     logger.debug(f'Download resources from page: {path} / {url}')
+    print(f'⇓ Downloading resources from page: {url}')    # noqa DAR003
+    spinner = DownloadSpinner()
     for file_url, page_path in get_resources_links(path, url):
         response = requests.get(file_url, stream=True)
         logger.debug(f'download resource {file_url}, response status code: {response.status_code}')
@@ -96,4 +110,5 @@ def download_resources(path: str, url: str) -> None:
             for chunk in response.iter_content(chunk_size=None):
                 f.write(chunk)
             logger.debug(f'File saved to {page_path}')
-
+        spinner.next()
+        print(file_url)   # noqa DAR003

@@ -1,6 +1,6 @@
 """Module for parsing the page and extracting the data."""
 import logging
-import os
+from os import listdir, makedirs, path
 from secrets import token_urlsafe
 from typing import List
 from urllib.parse import urljoin, urlparse
@@ -70,23 +70,23 @@ def make_url_absolute(url: str, request_url: str) -> str:
     return urljoin(request_url, url)
 
 
-def read_file(path: str) -> str:
+def read_file(file_path: str) -> str:
     """Read file and return content.
 
-    :param path: path to file
+    :param file_path: path to file
     :return: content of file
     """
-    with open(path, encoding='utf-8') as f:
+    with open(file_path, encoding='utf-8') as f:
         return f.read()
 
 
 def write_file(file_path: str, soup: BeautifulSoup):
-    """Write file with parsed html (modified links to local resources)
+    """Write file with parsed html (modified links to local resources).
 
     :param file_path: path to file for saving
     :param soup: modified page source
     """
-    with open(file_path, 'w') as f:
+    with open(file_path, 'w', encoding='utf-8') as f:
         f.write(str(soup.prettify()))
 
 
@@ -99,7 +99,7 @@ def is_local(resource_url: str, request_url: str) -> bool:
     """
     resource_hostname = urlparse(resource_url).hostname
     hostname = urlparse(request_url).hostname
-    if (resource_hostname == hostname) or (resource_hostname is None):
+    if (resource_hostname == hostname) or (resource_hostname is None):  # noqa: WPS531
         return True
     return False
 
@@ -112,34 +112,41 @@ def generate_local_path(file_path: str, resource_url: str):
     :return: path for saving resource
     """
     # generate folder name for resources
-    folder_name = f'{os.path.basename(file_path)[0:-5]}_files'
+    folder_name = f'{path.basename(file_path)[:-5]}_files'
     # generate folder path for resources
-    folder_path = os.path.normpath(os.path.join(os.path.dirname(file_path), folder_name))
+    folder_path = path.normpath(path.join(path.dirname(file_path), folder_name))
     # make dir, existed dirs allowed
-    os.makedirs(folder_path, exist_ok=True)
+    makedirs(folder_path, exist_ok=True)
     # get right filename for saving resource: unique and not too long
     resource_name = get_filename(folder_path, resource_url)
-    return os.path.join(folder_path, resource_name)
+    return path.join(folder_path, resource_name)
 
 
 def get_filename(folder_path: str, resource_url: str, original=False) -> str:
-    """Get name for resource from link:
-    - cut name for max 30 symbols
-    - if filename is not unique for folder, add random token
+    """Get name for resource from link.
+
+    Cut name for max 30 symbols.
+    If name is not unique in folder, add random token to it.
+
     :param folder_path: path to folder for saving resource
     :param resource_url: url of resource
     :param original: if True, return filename with added extension '_original'
-    :return:
-    """
-    filename = os.path.basename(urlparse(resource_url).path)    # get filename from url
-    name, ext = os.path.splitext(filename)
-    if len(filename) > 30:                                      # cut long filenames
-        name = f'{name[:30]}'
 
-    if f'{name}{ext}' in os.listdir(folder_path):               # generate unique filename if it exist in folder
-        name = f'{name[:30]}_{token_urlsafe(8)}'
+    :return: filename for saving resource
+    """
+    max_len = 30  # max length of filename
+    token_len = 8  # length of random token
+
+    filename = path.basename(urlparse(resource_url).path)  # get filename from url
+    name, ext = path.splitext(filename)
+
+    if len(filename) > max_len:  # cut long filenames
+        name = f'{name[:max_len]}'
+
+    if f'{name}{ext}' in listdir(folder_path):  # generate unique filename if it exist in folder
+        name = f'{name[:max_len]}_{token_urlsafe(token_len)}'
 
     if original:
         return f'{name}_original{ext}'
-    else:
-        return f'{name}{ext}'
+
+    return f'{name}{ext}'

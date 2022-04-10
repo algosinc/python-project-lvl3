@@ -1,53 +1,59 @@
-import sys
+"""This is entry point for the page_loader package."""
 import argparse
 import logging
+import sys
+from colorama import Fore
 from logging.config import dictConfig
+
+
+from page_loader.loader import ExpectedError, download
 from page_loader.logging_config import LOGGING_LEVELS, logger_setup
 from page_loader.scripts.definitions import DEFAULT_DIR
-from page_loader.loader import download, ExpectedError
 
-SUCCESS_MESSAGE = "Page was successfully downloaded into '{0}'"
+SUCCESS_MESSAGE = f"{Fore.GREEN}Page was successfully downloaded into '{0}'{Fore.RESET}"
 
 
 def main() -> None:
-    """ Main function """
-    url, download_dir, logger_level = cli()     # get args from CLI
-    logging.config.dictConfig(logger_setup(logger_level))
+    """Get url, output dir and log level from CLI."""
+    url, download_dir, logger_level = cli()  # get args from CLI
+    dictConfig(logger_setup(logger_level))
     logger = logging.getLogger(__name__)
 
     try:
         saved_page = download(url, download_dir)
     except ExpectedError:
-        logging.exception("Web page download failed")
+        logger.exception('Web page download failed')
         sys.exit(1)
-    print(SUCCESS_MESSAGE.format(saved_page))
+
+    sys.stdout.write(f"{Fore.GREEN}✓ Page was successfully downloaded into: '{saved_page}'{Fore.RESET}")
     sys.exit(0)
 
 
 def cli() -> (str, str, str):
-    """ CLI interface for the app """
-
+    """CLI interface for the app."""
     parser = argparse.ArgumentParser(description='Web page downloader')
-    parser.add_argument('url',
-                        help='url to download',
-                        type=str
-                        )
-
-    parser.add_argument('-o',
-                        '--output',
-                        type=str,
-                        default=DEFAULT_DIR,
-                        help=f'output dir (default: {DEFAULT_DIR})'
-                        )
+    parser.add_argument(
+        'url',
+        help='url to download',
+        type=str,
+    )
 
     parser.add_argument(
-                        '-l',
-                        '--log-level',
-                        type=str,
-                        default='warning',
-                        choices=LOGGING_LEVELS.keys(),
-                        help='sets log level (default: warning)'
-                        )
+        '-o',
+        '--output',
+        type=str,
+        default=DEFAULT_DIR,
+        help=f'output dir (default: {DEFAULT_DIR})',
+    )
+
+    parser.add_argument(
+        '-l',
+        '--log-level',
+        type=str,
+        default='warning',
+        choices=LOGGING_LEVELS.keys(),
+        help='sets log level (default: warning)',
+    )
 
     args = parser.parse_args()
     return args.url, args.output, args.log_level
@@ -55,4 +61,3 @@ def cli() -> (str, str, str):
 
 if __name__ == '__main__':
     main()
-
