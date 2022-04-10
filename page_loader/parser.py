@@ -1,21 +1,11 @@
 """Module for parsing the page and extracting the data."""
-import os
 import logging
-
+import os
 from secrets import token_urlsafe
-from bs4 import BeautifulSoup
 from typing import List
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urljoin, urlparse
 
-'''
-+ get file_path, resources_path
-+ open html file and read
-+ parse it for resources
-- check, if resource is local
-- change links from web to local storage
-- add to queue list for downloading
-- return queue
-'''
+from bs4 import BeautifulSoup
 
 # allowed resources for downloading
 RESOURCES = {  # noqa: WPS407
@@ -29,11 +19,11 @@ logger = logging.getLogger(__name__)
 
 
 def get_resources_links(file_path: str, request_url: str) -> List[tuple]:
-    """ Get all links of local resources from html file for downloading
+    """Get all links of local resources from html file for downloading.
 
-    :param file_path: path to file for parsing
-    :param request_url: url of the web page
-    :return: list of tuples with urls for downloading and paths for saving
+    :param: file_path: path to file for parsing.
+    :param: request_url: url of the web page.
+    :return: list of tuples with urls for downloading and paths for saving.
     """
     logger.debug(f'get_resources_links file_path: {file_path}, request_url: {request_url}')
     soup = BeautifulSoup(read_file(file_path), 'html.parser')
@@ -43,6 +33,7 @@ def get_resources_links(file_path: str, request_url: str) -> List[tuple]:
         logger.debug(f'processing tag: {tag}')
         if tag.has_attr(RESOURCES.get(tag.name)):
             # make absolute url from local url
+
             current_url = tag[RESOURCES[tag.name]]
             resource_url = make_url_absolute(current_url, request_url)
             logger.debug(f'convert url {current_url} to absolute url: {resource_url}')
@@ -58,29 +49,34 @@ def get_resources_links(file_path: str, request_url: str) -> List[tuple]:
                 tag[RESOURCES[tag.name]] = local_path
 
     write_file(file_path, soup)
-    logger.debug(f'return {len(links)} links: {str(links)[:200]} ...')
+    logger.debug(f'return {len(links)} links: {str(links)[:200]} ...')  # noqa
     return links
 
 
 def make_url_absolute(url: str, request_url: str) -> str:
-    """Make url absolute
+    """Make url absolute.
+
     :param url: url to make absolute
     :param request_url: request url, contains hostname
     :return: absolute url
     """
     # fix url if it is relative
     if url.startswith('//'):
-        url = 'http:' + url
+        url = f'http:{url}'
 
     if bool(urlparse(url).netloc):
         return url
-    else:
-        return urljoin(request_url, url)
+
+    return urljoin(request_url, url)
 
 
 def read_file(path: str) -> str:
-    """Read file and return content"""
-    with open(path, encoding="utf-8") as f:
+    """Read file and return content.
+
+    :param path: path to file
+    :return: content of file
+    """
+    with open(path, encoding='utf-8') as f:
         return f.read()
 
 
@@ -95,7 +91,7 @@ def write_file(file_path: str, soup: BeautifulSoup):
 
 
 def is_local(resource_url: str, request_url: str) -> bool:
-    """Check, is the received path local for host
+    """Check, is the received path local for host.
 
     :param resource_url: url of checked resource
     :param request_url: request url, contains hostname
@@ -105,18 +101,18 @@ def is_local(resource_url: str, request_url: str) -> bool:
     hostname = urlparse(request_url).hostname
     if (resource_hostname == hostname) or (resource_hostname is None):
         return True
-    else:
-        return False
+    return False
 
 
 def generate_local_path(file_path: str, resource_url: str):
-    """ Generate path for saving resource
+    """Generate path for saving resource.
+
     :param file_path: path to saved html file
     :param resource_url: parsed url of resource
     :return: path for saving resource
     """
     # generate folder name for resources
-    folder_name = os.path.basename(file_path)[0:-5] + '_files'
+    folder_name = f'{os.path.basename(file_path)[0:-5]}_files'
     # generate folder path for resources
     folder_path = os.path.normpath(os.path.join(os.path.dirname(file_path), folder_name))
     # make dir, existed dirs allowed
