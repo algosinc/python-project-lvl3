@@ -2,9 +2,9 @@
 import argparse
 import logging
 import sys
-from colorama import Fore
 from logging.config import dictConfig
 
+from colorama import Fore
 
 from page_loader.loader import ExpectedError, download
 from page_loader.logging_config import LOGGING_LEVELS, logger_setup
@@ -25,7 +25,7 @@ def main() -> None:
         logger.exception('Web page download failed')
         sys.exit(1)
 
-    sys.stdout.write(f"{Fore.GREEN}✓ Page was successfully downloaded into: '{saved_page}'{Fore.RESET}")
+    sys.stdout.write(f"{Fore.GREEN}✓ Page was successfully downloaded into: '{saved_page}'{Fore.RESET}")  # noqa: WPS221
     sys.exit(0)
 
 
