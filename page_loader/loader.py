@@ -1,49 +1,39 @@
-import os
-import requests
 import logging
+import os
 
+import requests
 from colorama import Fore
 from progress.spinner import Spinner
+
 from page_loader.namer import get_page_filename
-from page_loader.parser import get_resources_links, get_filename
-from page_loader.scripts.definitions import ROOT_DIR, DEFAULT_DIR
-
-
-'''
-Задачи
-Добавьте в тесты проверку скачивания изображений и изменения HTML.
-Измените HTML так, чтобы все ссылки указывали на скачанные файлы.
-Добавьте в ридми аскинему с примером работы пакета.
-Подсказки
-Beautiful Soup может ломать отступы и кодировку после изменения HTML-файла, учитывайте это в фикстурах.
-При изменении HTML с помощью Beautiful Soup используйте значение по умолчанию форматера prettify().
-Для парсинга html используйте html.parser.
-'''
+from page_loader.parser import get_filename, get_resources_links
+from page_loader.scripts.definitions import DEFAULT_DIR, ROOT_DIR
 
 logger = logging.getLogger(__name__)
 
 
 class ExpectedError(Exception):
     """Class for errors expected during excecution of programm."""
-    pass
+
+    pass    # noqa
 
 
 def download(url: str, download_dir=DEFAULT_DIR) -> str:
-    """ Download web page and local resources to the specified directory.
+    """Download web page and local resources to the specified directory.
 
     :param url: url for downloading
     :param download_dir: folder for saving downloaded files
     :return local path to saved html file for CLI output
     :raises ExpectedError: permission denied or incorrect path
     """
-
-    page_path = os.path.join(ROOT_DIR, download_dir, get_page_filename(url))     # generate absolute path for saving file
+    # generate absolute path for saving file
+    page_path = os.path.join(ROOT_DIR, download_dir, get_page_filename(url))
     logger.debug(f'Generated path for saving file: {page_path}')
 
     try:
         os.makedirs(os.path.dirname(page_path), exist_ok=True)      # make dir, existed dirs allowed
     except (OSError, FileNotFoundError):
-        logger.exception("FS error happened.")
+        logger.exception('FS error happened.')
         raise
 
     try:
@@ -60,19 +50,19 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
 
 
 def download_html(url: str, page_path: str) -> str:
-    """
-    Download html file and save it to the specified directory
+    """Download html file and save it to the specified directory.
+
     :param url: url of the web page
     :param page_path: folder for saving downloaded files
     :return local path to saved html file for CLI output
-    :raises network error
+    :raises RequestException: request error
     """
     try:
         response = requests.get(url)
         logger.debug(f'Response status code: {response.status_code}')
         response.raise_for_status()
     except requests.exceptions.RequestException:
-        logger.exception("Network error happened.")
+        logger.exception('Network error happened.')
         raise
 
     # save page for modification
