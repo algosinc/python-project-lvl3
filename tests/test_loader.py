@@ -22,11 +22,11 @@ def read_file(path):
 # @pytest.mark.parametrize('args', (
 #     ['-o', '/tmp/', 'https://example.com'],
 #     ['--output', '/tmp/', 'https://example.com'],
-#     # ['-o', '/tmp/', '-l', 'INFO', 'https://example.com'],
-#     # ['-o', '/tmp/', '-l', 'DEBUG', 'https://example.com'],
-# ))
-# def test_parse_args(args):
-#     cli().parse_args(args)
+    # ['-o', '/tmp/', '-l', 'INFO', 'https://example.com'],
+    # ['-o', '/tmp/', '-l', 'DEBUG', 'https://example.com'],
+))
+def test_parse_args(args):
+    cli().parse_args(args)
 
 
 def test_download(requests_mock):
