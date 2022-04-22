@@ -1,0 +1,6 @@
+⇓ Downloading page: https://habr.ru
+⇓ Downloading resources from page: https://habr.ru
+✓ Downloaded: https://habr.ru/img/habr_en.png
+✓ Downloaded: https://habr.ru/manifest.webmanifest
+✓ Downloaded: https://habr.ru/js/ads.js
+Page was successfully downloaded into 'C:\Users\Al\Google Drive\_Dev\python-project-lvl3\page_loader\scripts\tmp2\habr-ru.html'
