@@ -7,7 +7,7 @@ import pytest
 
 from page_loader.scripts.main import main
 
-DIR_TO_SAVE = 'tests/tmp_downloads'
+DIR_TO_SAVE = 'tmp_dir'
 TEST_URL = 'https://habr.ru'
 SAVED_FILE = r'page_loader\scripts\tmp2\habr-ru.html'
 EXPECTED_OUTPUT = 'tests/fixtures/expected_cli_output.txt'
@@ -22,7 +22,7 @@ EXPECTED_OUTPUT = 'tests/fixtures/expected_cli_output.txt'
 
 @pytest.mark.parametrize(
     'dir_to_save, test_url, saved_file, expected_output',
-    [DIR_TO_SAVE, TEST_URL, SAVED_FILE, EXPECTED_OUTPUT],
+    [(DIR_TO_SAVE, TEST_URL, SAVED_FILE, EXPECTED_OUTPUT)],
 )
 def test_main_cli(capsys, monkeypatch, dir_to_save, test_url, saved_file, expected_output):
     """Test main. Send args and check CLI output. Check if file was created and content is correct."""
@@ -31,7 +31,7 @@ def test_main_cli(capsys, monkeypatch, dir_to_save, test_url, saved_file, expect
         assert os.path.exists(saved_file)
 
         captured = capsys.readouterr()
-        with open(expected_output, 'r') as expected_cli_output:
+        with open(expected_output, 'r', encoding='utf8') as expected_cli_output:
             assert captured.out == expected_cli_output.read()
         assert captured.out == expected_output
 
