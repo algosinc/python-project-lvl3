@@ -1,6 +1,7 @@
 """Module for downloading the page and resources."""
 import logging
 import os
+import sys
 
 import requests
 from colorama import Fore
@@ -10,6 +11,7 @@ from page_loader.namer import get_page_filename
 from page_loader.parser import get_resources_links
 from page_loader.scripts.definitions import DEFAULT_DIR, ROOT_DIR
 
+sys.stdout.reconfigure(encoding='utf-8')
 logger = logging.getLogger(__name__)
 
 
