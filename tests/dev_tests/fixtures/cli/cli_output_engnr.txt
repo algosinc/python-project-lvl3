@@ -1,0 +1,7 @@
+⇓ Downloading page: https://engnr.dev
+⇓ Downloading resources from page: https://engnr.dev
+https://engnr.dev/favicon.svg
+https://engnr.dev/favicon.png
+https://engnr.dev/output.css
+https://engnr.dev/assets/avatar.jpg
+[32mPage was successfully downloaded into 'C:\Users\Al\Google Drive\_Dev\python-project-lvl3\page_loader\scripts\tmp3\engnr-dev.html'[39m

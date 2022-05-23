@@ -1,0 +1,7 @@
+⇓ Downloading page: https://engnr.dev
+⇓ Downloading resources from page: https://engnr.dev
+https://engnr.dev/favicon.svg
+https://engnr.dev/favicon.png
+https://engnr.dev/output.css
+https://engnr.dev/assets/avatar.jpg
+[32mPage was successfully downloaded into '{path}'[39m

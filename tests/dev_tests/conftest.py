@@ -3,12 +3,10 @@ import pytest
 
 
 @pytest.fixture(scope='session')
-def tmpdir_download(tempdir_factory):
+def download_tmpdir(tmpdir_factory):
     """Create a temporary directory for downloads.
 
-    :param tempdir_factory: fixture for create temporary directory
+    :param tmpdir_factory: fixture for create temporary directory
     :return: temporary directory
     """
-
-
-    return tempdir_factory.mktemp('tmp_downloads')
+    return tmpdir_factory.mktemp('tmp_downloads')
