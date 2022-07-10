@@ -24,9 +24,9 @@ def read_file(path):
 #     ['--output', '/tmp/', 'https://example.com'],
     # ['-o', '/tmp/', '-l', 'INFO', 'https://example.com'],
     # ['-o', '/tmp/', '-l', 'DEBUG', 'https://example.com'],
-))
-def test_parse_args(args):
-    cli().parse_args(args)
+# ))
+# def test_parse_args(args):
+#     cli().parse_args(args)
 
 
 def test_download(requests_mock):
