@@ -7,15 +7,15 @@ from page_loader.loader import download
 TEST_URL = 'https://ru.hexlet.io/courses'
 
 LOCALS_FIXTURES = (
-    'tests/fixtures/page.html',
-    'tests/fixtures/image.png',
-    'tests/fixtures/script.js',
-    'tests/fixtures/style.css',
+    'tests/fixtures/remote_page.html',
+    'tests/fixtures/resource_files/python.png',
+    'tests/fixtures/resource_files/runtime.js',
+    'tests/fixtures/resource_files/application.css',
 )
 
 MOCKING_LINKS = (
     TEST_URL,
-    'https://ru.hexlet.io/assets/professions/nodejs.png',
+    'https://ru.hexlet.io/assets/professions/python.png',
     'https://ru.hexlet.io/packs/js/runtime.js',
     'https://ru.hexlet.io/assets/application.css',
 )
