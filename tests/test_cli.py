@@ -5,14 +5,14 @@ import subprocess
 
 def save_fixture(cli_output):
     """Tool to save the output of the CLI to a file for next test."""
-    with open('tests/fixtures/cli/cli_output_engnr.txt', 'w', encoding='utf-8') as f2:
+    with open('fixtures/cli/expected_cli_output_engnr.txt', 'w', encoding='utf-8') as f2:
         f2.write(cli_output.stdout)
 
 
 def test_cli_interface(download_tmpdir):
     """Test the CLI interface."""
     try:
-        with open('tests/fixtures/cli/expected_cli_output_engnr.txt', 'r', encoding='utf-8') as f:
+        with open('fixtures/cli/expected_cli_output_engnr.txt', 'r', encoding='utf-8') as f:
             expected_cli_output = f.read()
             cli_output = subprocess.run(
                 ['poetry', 'run', 'page-loader', '-o', download_tmpdir, 'https://engnr.dev'],
