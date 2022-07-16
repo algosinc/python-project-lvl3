@@ -44,7 +44,7 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
     try:
         os.makedirs(os.path.dirname(page_path), exist_ok=True)      # make dir, existed dirs allowed
     except OSError:
-        logger.exception('FS error happened.')
+        logger.exception('File system error happened.')
         raise
 
     try:
