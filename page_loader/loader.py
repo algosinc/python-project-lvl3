@@ -43,12 +43,6 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
     page_path = path.join(ROOT_DIR, download_dir, get_page_filename(url))
     logger.debug(f'Generated path for saving file: {page_path}')
 
-    # try:
-    #     makedirs(path.dirname(page_path), exist_ok=True)      # make dir, existed dirs allowed
-    # except OSError:
-    #     logger.exception('File system error happened.')
-    #     raise
-
     try:
         download_path = download_html(url, page_path)
     except FileNotFoundError:
