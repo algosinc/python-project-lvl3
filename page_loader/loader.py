@@ -38,6 +38,7 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
     :return: local path to saved html file for CLI output
     """
     # generate absolute path for saving file
+    logger.debug(f'====== \nStart downloading. URL: {url}, download dir: {download_dir}')
     page_path = os.path.join(ROOT_DIR, download_dir, get_page_filename(url))
     logger.debug(f'Generated path for saving file: {page_path}')
 
