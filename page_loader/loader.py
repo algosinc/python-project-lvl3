@@ -1,6 +1,6 @@
 """Module for downloading the page and resources."""
 import logging
-import os
+from os import path, makedirs
 import sys
 
 import requests
@@ -32,26 +32,35 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
 
     :param url: url for downloading
     :param download_dir: folder for saving downloaded files
-    :raises OSError: incorrect path
+    :raises FileNotFoundError: incorrect path
     :raises PermissionError: permission denied
+    :raises OSError: unexpected filesystem error
 
     :return: local path to saved html file for CLI output
     """
     # generate absolute path for saving file
-    logger.debug(f'====== \nStart downloading. URL: {url}, download dir: {download_dir}')
-    page_path = os.path.join(ROOT_DIR, download_dir, get_page_filename(url))
+    logger.debug(f'==> Start downloading. URL: {url}, download dir: {download_dir}')
+    page_path = path.join(ROOT_DIR, download_dir, get_page_filename(url))
     logger.debug(f'Generated path for saving file: {page_path}')
 
-    try:
-        os.makedirs(os.path.dirname(page_path), exist_ok=True)      # make dir, existed dirs allowed
-    except OSError:
-        logger.exception('File system error happened.')
-        raise
+    # try:
+    #     makedirs(path.dirname(page_path), exist_ok=True)      # make dir, existed dirs allowed
+    # except OSError:
+    #     logger.exception('File system error happened.')
+    #     raise
 
     try:
         download_path = download_html(url, page_path)
+    except FileNotFoundError:
+        logger.exception('File system error happened. Check, that chosen directory is exist.')
+        raise
+
     except PermissionError:
         logger.exception(f'Permission denied for {page_path}')
+        raise
+
+    except OSError:
+        logger.exception('Other file system error happened.')
         raise
 
     logger.debug(f'Download resources from page: {url}')
@@ -85,8 +94,8 @@ def download_html(url: str, page_path: str) -> str:
         logger.debug(f'Saved page for modification: {page_path}')
 
     # save original page
-    name, ext = os.path.splitext(page_path)
-    original_page_path = os.path.join(os.path.dirname(page_path), f'{name}_original{ext}')
+    name, ext = path.splitext(page_path)
+    original_page_path = path.join(path.dirname(page_path), f'{name}_original{ext}')
     with open(original_page_path, 'w', encoding='utf-8') as f2:
         f2.write(response.text)
         logger.debug(f'Saved original page: {original_page_path}')
@@ -95,20 +104,20 @@ def download_html(url: str, page_path: str) -> str:
     return page_path
 
 
-def download_resources(path: str, url: str) -> None:
+def download_resources(file_path: str, url: str) -> None:
     """Download local resources.
 
-    :param path: path to html file
+    :param file_path: path to html file
     :param url: url of the web page
     """
-    logger.debug(f'Download resources from page: {path} / {url}')
+    logger.debug(f'Download resources from page: {file_path} / {url}')
     print(f'⇓ Downloading resources from page: {url}')    # noqa DAR003
     spinner = DownloadSpinner()
-    for file_url, page_path in get_resources_links(path, url):
+    for file_url, page_path in get_resources_links(file_path, url):
         response = requests.get(file_url, stream=True)
         logger.debug(f'download resource {file_url}, response status code: {response.status_code}')
         # download file
-        os.makedirs(os.path.dirname(page_path), exist_ok=True)      # make dir, existed dirs allowed
+        makedirs(path.dirname(page_path), exist_ok=True)      # make dir, existed dirs allowed
         with open(page_path, 'wb') as f:                            # save file with chunk iteration
             for chunk in response.iter_content(chunk_size=None):
                 f.write(chunk)
