@@ -88,11 +88,11 @@ def download_html(url: str, page_path: str) -> str:
         logger.debug(f'Saved page for modification: {page_path}')
 
     # save original page
-    name, ext = path.splitext(page_path)
-    original_page_path = path.join(path.dirname(page_path), f'{name}_original{ext}')
-    with open(original_page_path, 'w', encoding='utf-8') as f2:
-        f2.write(response.text)
-        logger.debug(f'Saved original page: {original_page_path}')
+    # name, ext = path.splitext(page_path)
+    # original_page_path = path.join(path.dirname(page_path), f'{name}_original{ext}')
+    # with open(original_page_path, 'w', encoding='utf-8') as f2:
+    #     f2.write(response.text)
+    #     logger.debug(f'Saved original page: {original_page_path}')
 
     logger.debug(f'Return: {page_path}')
     return page_path
