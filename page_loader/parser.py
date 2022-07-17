@@ -45,8 +45,10 @@ def get_resources_links(file_path: str, request_url: str) -> List[tuple]:
                 local_path = generate_local_path(file_path, resource_url)
                 links.append((resource_url, local_path))
                 logger.debug(f'add links to list: url for download {resource_url}, path for saving {local_path}')
+                # convert resource path from absolute to relative
+                relative_resource_path = path.relpath(local_path, path.dirname(file_path))
                 # change tag url to local url
-                tag[RESOURCES[tag.name]] = local_path
+                tag[RESOURCES[tag.name]] = relative_resource_path
 
     write_file(file_path, soup)
     logger.debug(f'return {len(links)} links: {str(links)[:200]} ...')  # noqa

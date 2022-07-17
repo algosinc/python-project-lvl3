@@ -3,7 +3,7 @@
 
 import os
 # Calculate the correct path to the root directory of our project
-ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), ''))
+ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), os.path.pardir))
 
 
 # CLI config

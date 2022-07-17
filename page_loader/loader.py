@@ -1,6 +1,7 @@
 """Module for downloading the page and resources."""
 import logging
 import os
+import sys
 
 import requests
 from colorama import Fore
@@ -10,6 +11,7 @@ from page_loader.namer import get_page_filename
 from page_loader.parser import get_resources_links
 from page_loader.scripts.definitions import DEFAULT_DIR, ROOT_DIR
 
+sys.stdout.reconfigure(encoding='utf-8')
 logger = logging.getLogger(__name__)
 
 
@@ -42,7 +44,7 @@ def download(url: str, download_dir=DEFAULT_DIR) -> str:
     try:
         os.makedirs(os.path.dirname(page_path), exist_ok=True)      # make dir, existed dirs allowed
     except OSError:
-        logger.exception('FS error happened.')
+        logger.exception('File system error happened.')
         raise
 
     try:

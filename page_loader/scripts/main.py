@@ -10,7 +10,7 @@ from page_loader.loader import ExpectedError, download
 from page_loader.logging_config import LOGGING_LEVELS, logger_setup
 from page_loader.scripts.definitions import DEFAULT_DIR
 
-SUCCESS_MESSAGE = f"{Fore.GREEN}Page was successfully downloaded into '{0}'{Fore.RESET}"
+SUCCESS_MESSAGE = "{0}Page was successfully downloaded into '{1}'{2}"
 
 
 def main() -> None:
@@ -25,7 +25,7 @@ def main() -> None:
         logger.exception('Web page download failed')
         sys.exit(1)
 
-    sys.stdout.write(f"{Fore.GREEN}✓ Page was successfully downloaded into: '{saved_page}'{Fore.RESET}")  # noqa: WPS221
+    sys.stdout.write(SUCCESS_MESSAGE.format(Fore.GREEN, saved_page, Fore.RESET))
     sys.exit(0)
 
 

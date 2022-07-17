@@ -9,11 +9,11 @@
 
 ## Basic information
 
-**Page loader** downloads the web page to an existing folder allowing user to open it offline. This is achieved due to the fact that the program also downloads local resources of the web page to the computer. Web page is downloaded to the directory chosen by user or by default to the current working directory.
+**Page loader** downloads the web page to an existing folder allowing the user to open it offline. This is achieved, as the program also downloads local resources of the web page to the computer. The web page is downloaded to the directory chosen by the user or by default to the current working directory.
 
 ## Quickstart
 
-**Page loader** at the moment is stored only at *github* so the quickest and the easiest way to install it is to use *pip* with URL of repository.
+**Page loader** at the moment is stored only at GitHub so the quickest and easiest way to install it is to use pip with the URL of the repository.
 ```bash
 pip install git+https://github.com/algosinc/python-project-lvl3.git
 ```
@@ -22,15 +22,17 @@ pip install git+https://github.com/algosinc/python-project-lvl3.git
 
 Basic **Page loader** syntax looks like this:
 ```bash
-page-loader --output url
+page-loader --output --loglevel url
 ```
-*output* is an optional argument which means a folder where to download the page. By default it is to current working directory.
+The *output* is an optional argument that sets the folder to download the page. By default, it is set to the current working directory.
 
-You can also recall about main features and syntax of a program using *help command*:
+The *loglevel* is an optional argument that sets the logging level. There are five valid options available: 'DEBUG', 'INFO', 'WARNING', 'ERROR' and 'CRITICAL'.
+
+You can also recall about main features and syntax of a program using the *help command*:
 ```bash
 page-loader -h
 ```
 
 ## Asciinema demonstration:
 
-Installing the whole package and main features of the programm are demonstrated in the asciinema below:
+Installing the whole package and the main features of the program is demonstrated in the asciinema below:
