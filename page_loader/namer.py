@@ -5,10 +5,12 @@ from urllib.parse import urlparse
 
 
 def get_page_filename(url, ext='.html'):
+    """Get filename for the page.
 
-    '''
-    TODO: ограничить максимальную длину имени
-    '''
+    :param url: url of the page
+    :param ext: extension of the file
+    :return: filename for the page
+    """
     u = urlparse(url)
     parsed_url = u.hostname + u.path
     url_head, url_tail = os.path.splitext(parsed_url)
