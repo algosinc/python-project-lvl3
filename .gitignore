@@ -35,3 +35,4 @@ page_loader/dev/tmp/
 page_loader/tmp/
 page_loader/dev/
 */.pytest_cache/
+*.log
